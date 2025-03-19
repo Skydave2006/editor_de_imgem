@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edição de Imagem</title>
+</head>
+<body>
+    <h1>Edição de Imagem</h1>
+
+    <!-- Exibir imagem original -->
+    <h2>Imagem Original</h2>
+    <img src="{{ url_for('static', filename=image_url) }}" alt="Imagem Original" width="300">
+
+    <form action="" method="POST">
+        <div>
+            <label for="brightness">Brilho:</label>
+            <input type="number" name="brightness" min="0.1" max="2" step="0.1" value="1">
+        </div>
+        <div>
+            <label for="contrast">Contraste:</label>
+            <input type="number" name="contrast" min="0.1" max="2" step="0.1" value="1">
+        </div>
+        <button type="submit">Aplicar Efeitos</button>
+    </form>
+
+    {% if image_url %}
+        <h2>Imagem Editada</h2>
+        <!-- Exibir imagem editada -->
+        <img src="{{ url_for('static', filename=image_url) }}" alt="Imagem Editada" width="300">
+    {% endif %}
+</body>
+</html>
