@@ -45,34 +45,46 @@ def index():
 # Página de edição de imagem
 @app.route('/edit/<filename>', methods=['GET', 'POST'])
 def edit_image(filename):
-    file_path = os.path.join(STATIC_FOLDER, filename)  # A imagem original já está na pasta static/images/
+    file_path = os.path.join(STATIC_FOLDER, filename)  # Caminho da imagem original
     
     edited_filename = f'edited_{filename}'
-    edited_file_path = os.path.join(STATIC_FOLDER, edited_filename)
+    edited_file_path = os.path.join(STATIC_FOLDER, edited_filename)  # Caminho correto da imagem editada
 
     if request.method == 'POST':
         image = Image.open(file_path)
 
-        # Aplicar efeitos conforme a escolha do usuário
+        # Obter valores do formulário
         brightness = float(request.form.get('brightness', 1))
         contrast = float(request.form.get('contrast', 1))
+        saturation = float(request.form.get('saturation', 1))
+        sharpness = float(request.form.get('sharpness', 1))
+        grayscale = request.form.get('grayscale')  # Checkbox
+        flip_horizontal = request.form.get('flip_horizontal')  # Checkbox
+        flip_vertical = request.form.get('flip_vertical')  # Checkbox
 
-        enhancer = ImageEnhance.Brightness(image)
-        image = enhancer.enhance(brightness)
+        # Aplicar efeitos
+        image = ImageEnhance.Brightness(image).enhance(brightness)
+        image = ImageEnhance.Contrast(image).enhance(contrast)
+        image = ImageEnhance.Color(image).enhance(saturation)
+        image = ImageEnhance.Sharpness(image).enhance(sharpness)
 
-        enhancer = ImageEnhance.Contrast(image)
-        image = enhancer.enhance(contrast)
+        # Aplicar efeitos adicionais
+        if grayscale:
+            image = image.convert("L")  # Converte para preto e branco
+        if flip_horizontal:
+            image = image.transpose(Image.FLIP_LEFT_RIGHT)
+        if flip_vertical:
+            image = image.transpose(Image.FLIP_TOP_BOTTOM)
 
-        # Salvar imagem editada na pasta static/images/
+        # **Salvar imagem editada**
         try:
             image.save(edited_file_path)
-            print(f"Imagem editada salva em: {edited_file_path}")
+            print(f"✅ Imagem editada salva em: {edited_file_path}")
         except Exception as e:
-            print(f"Erro ao salvar imagem editada: {e}")
+            print(f"❌ Erro ao salvar imagem editada: {e}")
 
         return render_template('edit_image.html', original_image=filename, edited_image=edited_filename)
 
     return render_template('edit_image.html', original_image=filename, edited_image=None)
-
 if __name__ == '__main__':
     app.run(debug=True)
