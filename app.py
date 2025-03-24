@@ -48,7 +48,7 @@ def edit_image(filename):
     file_path = os.path.join(STATIC_FOLDER, filename)  # Caminho da imagem original
     
     edited_filename = f'edited_{filename}'
-    edited_file_path = os.path.join(STATIC_FOLDER, edited_filename)  # Caminho correto da imagem editada
+    edited_file_path = os.path.join(os.getcwd(), 'static/images', edited_filename)
 
     if request.method == 'POST':
         image = Image.open(file_path)
@@ -86,5 +86,6 @@ def edit_image(filename):
         return render_template('edit_image.html', original_image=filename, edited_image=edited_filename)
 
     return render_template('edit_image.html', original_image=filename, edited_image=None)
+
 if __name__ == '__main__':
     app.run(debug=True)
