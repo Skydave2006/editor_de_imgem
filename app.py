@@ -2,69 +2,77 @@ import os
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from PIL import Image, ImageEnhance
+import shutil  # Para copiar arquivos
 
 app = Flask(__name__)
 
-# Definir pasta para uploads e extensões permitidas
-app.config['UPLOAD_FOLDER'] = 'uploads/'
-app.config['STATIC_FOLDER'] = 'static/'  # Pasta de arquivos estáticos
-app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+# Configuração de diretórios
+UPLOAD_FOLDER = 'uploads/'
+STATIC_FOLDER = 'static/images/'  # Local onde as imagens serão servidas pelo Flask
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-# Verificar se a pasta de uploads existe, caso contrário, criá-la
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+# Criar pastas caso não existam
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(STATIC_FOLDER, exist_ok=True)
 
-# Verificar se a pasta de arquivos estáticos existe
-if not os.path.exists(app.config['STATIC_FOLDER']):
-    os.makedirs(app.config['STATIC_FOLDER'])
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['STATIC_FOLDER'] = STATIC_FOLDER
 
-# Função para verificar se o arquivo tem uma extensão permitida
+# Função para verificar se a extensão do arquivo é permitida
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Página inicial e upload de imagem
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    uploaded_image = None  # Variável para armazenar o nome da imagem enviada
+    
     if request.method == 'POST':
-        # Verificar se o arquivo foi enviado
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
             file.save(file_path)
-            return redirect(url_for('edit_image', filename=filename))
-    return render_template('index.html')
+            
+            # Copiar a imagem para static/images/
+            static_image_path = os.path.join(STATIC_FOLDER, filename)
+            shutil.copy(file_path, static_image_path)
+
+            uploaded_image = filename  # Guardar o nome da imagem para exibição
+
+    return render_template('index.html', uploaded_image=uploaded_image)
 
 # Página de edição de imagem
 @app.route('/edit/<filename>', methods=['GET', 'POST'])
 def edit_image(filename):
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    image = Image.open(file_path)
+    file_path = os.path.join(STATIC_FOLDER, filename)  # A imagem original já está na pasta static/images/
+    
+    edited_filename = f'edited_{filename}'
+    edited_file_path = os.path.join(STATIC_FOLDER, edited_filename)
 
     if request.method == 'POST':
-        # Editar imagem com base nas opções do formulário
-        if 'brightness' in request.form:
-            enhancer = ImageEnhance.Brightness(image)
-            image = enhancer.enhance(float(request.form['brightness']))
-        
-        if 'contrast' in request.form:
-            enhancer = ImageEnhance.Contrast(image)
-            image = enhancer.enhance(float(request.form['contrast']))
-        
-        # Salvar a imagem editada na pasta static/
-        edited_filename = 'edited_' + filename
-        edited_file_path = os.path.join(app.config['STATIC_FOLDER'], edited_filename)
+        image = Image.open(file_path)
 
+        # Aplicar efeitos conforme a escolha do usuário
+        brightness = float(request.form.get('brightness', 1))
+        contrast = float(request.form.get('contrast', 1))
+
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(brightness)
+
+        enhancer = ImageEnhance.Contrast(image)
+        image = enhancer.enhance(contrast)
+
+        # Salvar imagem editada na pasta static/images/
         try:
             image.save(edited_file_path)
-            print(f"Imagem editada salva com sucesso em: {edited_file_path}")
+            print(f"Imagem editada salva em: {edited_file_path}")
         except Exception as e:
-            print(f"Erro ao salvar a imagem editada: {e}")
+            print(f"Erro ao salvar imagem editada: {e}")
 
-        # Passar o caminho da imagem editada para o template
-        return render_template('edit_image.html', image_url=edited_filename)
+        return render_template('edit_image.html', original_image=filename, edited_image=edited_filename)
 
-    return render_template('edit_image.html', image_url=filename)
+    return render_template('edit_image.html', original_image=filename, edited_image=None)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -10,7 +10,7 @@
 
     <!-- Exibir imagem original -->
     <h2>Imagem Original</h2>
-    <img src="{{ url_for('static', filename=image_url) }}" alt="Imagem Original" width="300">
+    <img src="{{ url_for('static', filename='images/' + original_image) }}" alt="Imagem Original" width="300">
 
     <form action="" method="POST">
         <div>
@@ -24,10 +24,9 @@
         <button type="submit">Aplicar Efeitos</button>
     </form>
 
-    {% if image_url %}
+    {% if edited_image %}
         <h2>Imagem Editada</h2>
-        <!-- Exibir imagem editada -->
-        <img src="{{ url_for('static', filename=image_url) }}" alt="Imagem Editada" width="300">
+        <img src="{{ url_for('static', filename='images/' + edited_image) }}" alt="Imagem Editada" width="300">
     {% endif %}
 </body>
 </html>

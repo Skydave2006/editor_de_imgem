@@ -7,10 +7,20 @@
 </head>
 <body>
     <h1>Upload da Imagem</h1>
+    
     <form action="/" method="POST" enctype="multipart/form-data">
         <label for="file">Escolha uma imagem para editar:</label>
         <input type="file" name="file" id="file" required>
         <button type="submit">Upload</button>
     </form>
+
+    {% if uploaded_image %}
+        <h2>Imagem Enviada</h2>
+        <img src="{{ url_for('static', filename='images/' + uploaded_image) }}" alt="Imagem Enviada" width="300">
+        <br>
+        <a href="{{ url_for('edit_image', filename=uploaded_image) }}">
+            <button>Editar Imagem</button>
+        </a>
+    {% endif %}
 </body>
 </html>
