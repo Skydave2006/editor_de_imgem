@@ -5,7 +5,7 @@ Este projeto é uma aplicação web simples de edição de imagens, construída 
 ## Estrutura do Projeto
 A estrutura do projeto é a seguinte:
 
-´´´bash
+```bash
 editor_de_imagem/
 ├── static/
 │   ├── images/        # Armazena as imagens enviadas e editadas
@@ -16,7 +16,7 @@ editor_de_imagem/
 ├── uploads/
 ├── app.py             # Arquivo principal da aplicação Flask
 
-´´´
+```
 ## Descrição dos Arquivos
 ### 1. app.py
 Este é o arquivo principal onde a aplicação Flask é configurada e onde a lógica para upload e edição de imagens é implementada.
@@ -48,9 +48,9 @@ Espelhamento horizontal e vertical.
 Execução:
 Para executar a aplicação, basta rodar o seguinte comando no terminal:
 
-´´´bash
+```bash
 python app.py
-´´´
+```
 A aplicação estará disponível em http://127.0.0.1:5000/.
 
 ### 2. index.html
@@ -123,16 +123,15 @@ Bibliotecas: Flask, Pillow
 Instalação das Dependências
 Crie um ambiente virtual (opcional, mas recomendado) e instale as dependências com o seguinte comando:
 
-´´´bash
+```bash
 pip install Flask Pillow
-´´´
+```
 Rodando a Aplicação
 Execute o comando abaixo para rodar o servidor Flask:
 
-´´´bash
-
+```bash
 python app.py
-´´´
+```
 Agora, abra o navegador e acesse http://127.0.0.1:5000/ para usar o editor de imagens.
 
 ## Conclusão
