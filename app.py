@@ -6,15 +6,23 @@ import shutil
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = 'uploads/'
-STATIC_FOLDER = 'static/images/'
+# Obtém o caminho absoluto do diretório do script atual
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+# Caminhos corrigidos para usar o diretório correto
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static/uploads')
+STATIC_FOLDER = os.path.join(BASE_DIR, 'static/images')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+# Criar as pastas dentro do repositório, se não existirem
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(STATIC_FOLDER, exist_ok=True)
 
+# Configuração no Flask
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['STATIC_FOLDER'] = STATIC_FOLDER
+
+
 
 """
     Verifica se o ficheiro possui uma extensão permitida para upload.
@@ -68,7 +76,7 @@ def edit_image(filename):
     
     file_path = os.path.join(STATIC_FOLDER, filename)
     edited_filename = f'edited_{filename}'
-    edited_file_path = os.path.join(os.getcwd(), 'static/images', edited_filename)
+    edited_file_path = os.path.join(STATIC_FOLDER, edited_filename)
 
     if request.method == 'POST':
         image = Image.open(file_path)
@@ -94,13 +102,15 @@ def edit_image(filename):
 
         try:
             image.save(edited_file_path)
-            print(f"✅ Imagem editada guardada em: {edited_file_path}")
+            print(f"✅ Imagem editada guardada em: {edited_file_path}") 
         except Exception as e:
             print(f"❌ Erro ao guardar imagem editada: {e}")
 
         return render_template('edit_image.html', original_image=filename, edited_image=edited_filename)
 
     return render_template('edit_image.html', original_image=filename, edited_image=None)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

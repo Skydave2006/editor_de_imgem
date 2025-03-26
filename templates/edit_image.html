@@ -45,13 +45,11 @@
         
         <button type="submit">Aplicar Efeitos</button>
     </form>
-    </form>
 
     {% if edited_image %}
         <h2>Imagem Editada</h2>
-        <img src="{{ url_for('static', filename='images/' + edited_image) }}" alt="Imagem Editada" width="300">
+        <img src="{{ url_for('static', filename='images/' + edited_image) }}" alt="Imagem Editada">
     {% endif %}
-
    
 
 </body>

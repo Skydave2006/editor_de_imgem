@@ -23,16 +23,26 @@
             <button>Editar Imagem</button>
         </a>
     {% endif %}
+    
     <h2>Ferramenta de Desenho</h2>
+
 <input type="file" id="upload-image" />
 <button id="drawing-mode">Ativar Modo de Desenho</button>
 <button id="clear-canvas">Limpar</button>
+
+<!-- Novo seletor de cores -->
+<label for="color-picker">Cor do Desenho:</label>
+<input type="color" id="color-picker" value="#000000">
+
+<button id="save-canvas">Salvar Desenho</button>
+
 <canvas id="canvas" width="800" height="500" style="border:1px solid black;"></canvas>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
 <script>
+    // Inicializar o canvas
     const canvas = new fabric.Canvas('canvas');
-    canvas.isDrawingMode = true; // Ativar modo de desenho inicialmente
+    canvas.isDrawingMode = true; // Ativar o modo de desenho por padrão
 
     // Alternar modo de desenho
     document.getElementById('drawing-mode').onclick = function () {
@@ -40,7 +50,7 @@
         this.textContent = canvas.isDrawingMode ? "Desativar Modo de Desenho" : "Ativar Modo de Desenho";
     };
 
-    // Limpar o canvas sem remover a imagem de fundo
+    // Limpar o canvas sem apagar a imagem de fundo
     document.getElementById('clear-canvas').onclick = function () {
         canvas.getObjects().forEach(obj => {
             if (obj !== canvas.backgroundImage) {
@@ -50,7 +60,18 @@
         canvas.renderAll();
     };
 
-    // Carregar uma imagem do usuário
+    // Selecionar a cor do desenho
+    const colorPicker = document.getElementById('color-picker');
+    colorPicker.onchange = function () {
+        canvas.freeDrawingBrush.color = colorPicker.value;
+    };
+
+    // Configurar o pincel inicial (cor e espessura)
+    canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+    canvas.freeDrawingBrush.color = colorPicker.value; // Cor inicial
+    canvas.freeDrawingBrush.width = 5; // Espessura do pincel
+
+    // Carregar uma imagem do usuário no canvas
     document.getElementById('upload-image').onchange = function (event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -58,12 +79,32 @@
         const reader = new FileReader();
         reader.onload = function (e) {
             fabric.Image.fromURL(e.target.result, function (img) {
-                img.scaleToWidth(canvas.width); // Ajusta a largura da imagem ao tamanho do canvas
-                img.set({ selectable: false }); // Impede que a imagem seja editada
-                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+                img.scaleToWidth(canvas.width);
+                img.scaleToHeight(canvas.height);
+
+                // Definir a imagem como fundo do canvas
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                    scaleX: canvas.width / img.width,
+                    scaleY: canvas.height / img.height,
+                    originX: 'left',
+                    originY: 'top'
+                });
+
+                canvas.renderAll();
             });
         };
         reader.readAsDataURL(file);
+    };
+
+    // Salvar o desenho como imagem
+    document.getElementById('save-canvas').onclick = function () {
+        const image = canvas.toDataURL({ format: 'png' });
+
+        // Criar um link para download
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = 'desenho.png';
+        link.click();
     };
 </script>
 </body>
