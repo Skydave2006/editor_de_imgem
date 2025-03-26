@@ -9,7 +9,7 @@ Abrir o Editor: Abra o navegador e acesse o endereço do programa (por exemplo: 
 
 Na tela inicial, você verá uma opção para Escolher Ficheiro.
 
-Clique no botão "EScolher Ficheiro" para selecionar a imagem que deseja editar.
+Clique no botão "Escolher Ficheiro" para selecionar a imagem que deseja editar.
 
 ### 2. Ajustar o Brilho
 O que é: O brilho ajusta a luminosidade geral da imagem.

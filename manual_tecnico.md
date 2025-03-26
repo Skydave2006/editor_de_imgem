@@ -54,12 +54,14 @@ python app.py
 A aplicação estará disponível em http://127.0.0.1:5000/.
 
 ### 2. index.html
-Esta é a página inicial onde o usuário pode fazer upload de uma imagem.
+Esta é a página inicial onde o usuário pode fazer upload de uma imagem e utiliza a ferramenta de desenho.
 
 Funcionalidades:
 Formulário de Upload: Permite ao usuário selecionar e fazer upload de uma imagem.
 
 Exibição da Imagem Enviada: Após o upload, a imagem é exibida e um link para a página de edição é fornecido.
+
+Ferramenta de desenho:  Permite ao usuário selecionar e fazer upload de uma imagem. Após o upload, é possivel desenhar na imagem.
 
 Estrutura:
 O formulário de upload usa o método POST para enviar o arquivo.
