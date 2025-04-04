@@ -9,11 +9,11 @@ A estrutura do projeto é a seguinte:
 editor_de_imagem/
 ├── static/
 │   ├── images/        # Armazena as imagens enviadas e editadas
+├── ├── uploads/       # Armazena as imagens do modo desenho
 │   └── styles.css     # Arquivo CSS para estilização da interface
 ├── templates/
 │   ├── index.html     # Página inicial de upload de imagem
 │   └── edit_image.html # Página para edição da imagem
-├── uploads/
 ├── app.py             # Arquivo principal da aplicação Flask
 
 ```
